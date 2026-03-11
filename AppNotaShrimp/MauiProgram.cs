@@ -24,29 +24,30 @@ namespace AppNotaShrimp
             {
                 var dbPath = Path.Combine(FileSystem.AppDataDirectory, "notas.db");
                 options.UseSqlite($"Data Source={dbPath}");
-            }); 
+            });
 
 #if DEBUG
             builder.Logging.AddDebug();
 
             var app = builder.Build();
 #endif
-            using (var db = app.Services.CreateScope())
+            using (var scope = app.Services.CreateScope())
             {
-                var context = db.ServiceProvider.GetRequiredService<DataContext>();
+                var context = scope.ServiceProvider.GetRequiredService<DataContext>();
                 context.Database.EnsureCreated();
 
                 if (!context.Notas.Any())
                 {
-                    for (global::System.Int32 i = 0; i < 10; i++)
-                    {
-                        context.Notas.AddRange(
-                         new Notas { Id = i, Title = "Nota Nº"+i, Content = "Contenido de la nota "+i, CreatedAt = DateTime.Now, IsFavorite = (i % 2 == 0) }
+
+                    context.Notas.AddRange
+                        (
+                       new Notas { Id = 1, Title = "Nota Nº", Content = "Contenido de la nota ", CreatedAt = DateTime.Now, IsFavorite = true }
                      );
-                    }
                     context.SaveChanges();
+
+
                 }
- 
+
             }
 
             return app;
